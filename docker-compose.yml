@@ -23,6 +23,7 @@ services:
       - ./.env.dev.db
   mongodb:
     image: mongo
+    restart: always
     volumes:
       - mongo_data:/data/db
   angular:
@@ -36,6 +37,12 @@ services:
     command: ng serve --host 0.0.0.0 --poll 2000 --disable-host-check
     depends_on:
       - django
+  redis:
+    image: redis:4-alpine
+    restart: always
+    volumes:
+      - redis_data:/data
 volumes:
   postgres_data:
   mongo_data:
+  redis_data:
