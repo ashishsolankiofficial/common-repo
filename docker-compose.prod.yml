@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  django:
+    build: 
+      context: ../pepper/
+      dockerfile: Dockerfile.prod
+    command: gunicorn pepper.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/home/pepper/web/staticfiles
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+  nginx:
+    build: 
+      context: ../ginger/
+      dockerfile: Dockerfile.prod
+    volumes:
+      - static_volume:/home/pepper/web/staticfiles
+    ports:
+      - 80:80
+    depends_on:
+      - django
+volumes:
+  static_volume:
