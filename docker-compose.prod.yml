@@ -12,15 +12,37 @@ services:
       - 8000
     env_file:
       - ./.env.prod
+  django-clove:
+    build: 
+      context: ../clove/
+      dockerfile: Dockerfile.prod
+    command: gunicorn clove.wsgi:application --bind 0.0.0.0:8001
+    volumes:
+      - static_volume_clove:/home/clove/web/staticfiles
+    expose:
+      - 8001
+    env_file:
+      - ./.env.clove.prod
+    depends_on:
+      - db
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.clove.prod.db
   nginx:
     build: 
       context: ../ginger/
       dockerfile: Dockerfile.prod
     volumes:
       - static_volume:/home/pepper/web/staticfiles
+      - static_volume_clove:/home/clove/web/staticfiles
     ports:
       - 80:80
     depends_on:
       - django
 volumes:
+  postgres_data:
   static_volume:
+  static_volume_clove:
