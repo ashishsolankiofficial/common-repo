@@ -24,8 +24,8 @@ services:
     env_file:
       - ../common-prod-env/.env.clove.prod
     depends_on:
-      - db
-  db:
+      - db-clove
+  db-clove:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data_clove:/var/lib/postgresql/data/
@@ -41,7 +41,8 @@ services:
     ports:
       - 80:80
     depends_on:
-      - django
+      - django-clove
+      - django-pepper
 volumes:
   postgres_data_clove:
   static_volume_pepper:
