@@ -1,7 +1,7 @@
 version: '3.3'
 
 services:
-  django:
+  django-pepper:
     build: 
       context: ../pepper/
       dockerfile: Dockerfile.prod
@@ -11,7 +11,7 @@ services:
     expose:
       - 8000
     env_file:
-      - ./.env.prod
+      - ../common-prod-env/.env.pepper.prod
   django-clove:
     build: 
       context: ../clove/
@@ -22,27 +22,27 @@ services:
     expose:
       - 8001
     env_file:
-      - ./.env.clove.prod
+      - ../common-prod-env/.env.clove.prod
     depends_on:
       - db
   db:
     image: postgres:13.0-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres_data_clove:/var/lib/postgresql/data/
     env_file:
-      - ./.env.clove.prod.db
+      - ../common-prod-env/.env.clove.prod.db
   nginx:
     build: 
-      context: ../ginger/
-      dockerfile: Dockerfile.prod
+      context: ./
+      dockerfile: Dockerfile.fe.prod
     volumes:
-      - static_volume:/home/pepper/web/staticfiles
+      - static_volume_pepper:/home/pepper/web/staticfiles
       - static_volume_clove:/home/clove/web/staticfiles
     ports:
       - 80:80
     depends_on:
       - django
 volumes:
-  postgres_data:
-  static_volume:
+  postgres_data_clove:
+  static_volume_pepper:
   static_volume_clove:
